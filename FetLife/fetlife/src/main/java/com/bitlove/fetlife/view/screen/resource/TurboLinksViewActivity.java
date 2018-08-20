@@ -260,6 +260,8 @@ public class TurboLinksViewActivity extends ResourceActivity implements Turbolin
             } else if ((mediaId = UrlUtil.isMediaRequested(this,Uri.parse(location))) != null){
                 requestedMediaIds.add(mediaId);
                 return;
+            } else if (UrlUtil.openInPlace(this,Uri.parse(location))){
+                //skip
             } else if (UrlUtil.handleInternal(this,Uri.parse(location))){
                 return;
             } else {

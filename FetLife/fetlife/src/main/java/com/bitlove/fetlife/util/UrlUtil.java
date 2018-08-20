@@ -35,6 +35,22 @@ public class UrlUtil {
 //        return (urlSegments.size() >= 2 && "wallpapers".equals(urlSegments.get(0)) && "download".equals(urlSegments.get(1)));
 //    }
 
+    public static boolean openInPlace(BaseActivity baseActivity, Uri uri) {
+        List<String> urlSegments = uri.getPathSegments();
+        String apiIdsParam = uri.getQueryParameter("api_ids");
+        String[] apiIds = apiIdsParam != null ? apiIdsParam.split(",") : new String[0];
+        if ("users".equals(urlSegments.get(0))) {
+            if (urlSegments.size()<3) {
+                return false;
+            }
+            if ("posts".equals(urlSegments.get(2))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public static boolean handleInternal(BaseActivity baseActivity, Uri uri) {
         List<String> urlSegments = uri.getPathSegments();
         String apiIdsParam = uri.getQueryParameter("api_ids");
@@ -77,10 +93,11 @@ public class UrlUtil {
                 return false;
             }
             if ("posts".equals(urlSegments.get(2))) {
+                TurboLinksViewActivity.startActivity(baseActivity,uri.toString(),"[Writing]");
 //                String memberId = apiIds.length >= 2 ? apiIds[0] : ServerIdUtil.prefixServerId(urlSegments.get(1));
 //                String postId = apiIds.length >= 2 ? apiIds[1] : ServerIdUtil.prefixServerId(urlSegments.get(3));
 //                WritingActivity.startActivity(baseActivity,postId,memberId);
-                return false;
+                return true;
             }
             return false;
         }
