@@ -352,7 +352,9 @@ public class TurbolinksSession implements TurbolinksScrollUpCallback {
             initProgressView();
         }
 
-        runJavascript("webView.visitLocationWithActionAndRestorationIdentifier", "Authorization", token);
+        if (token != null) {
+            runJavascript("webView.visitLocationWithActionAndRestorationIdentifier", "Authorization", token);
+        }
 
         if (turbolinksIsReady) {
             visitCurrentLocationWithTurbolinks();
@@ -362,7 +364,7 @@ public class TurbolinksSession implements TurbolinksScrollUpCallback {
             TurbolinksLog.d("Cold booting: " + location);
             Map<String,String> headers = new HashMap<>();
             headers.put("X-Fetlife-Webview","1");
-            headers.put("Authorization",token);
+            if (token != null) headers.put("Authorization",token);
             webView.loadUrl(location,headers);
         }
 

@@ -59,6 +59,9 @@ public class UrlUtil {
             }
         }
         if ("users".equals(urlSegments.get(0))) {
+            if (urlSegments.size()>1 && "sign_in".equals(urlSegments.get(1))) {
+                return false;
+            }
             if (urlSegments.size()<3) {
                 String memberId = apiIds.length >= 1 ? apiIds[0] : ServerIdUtil.prefixServerId(uri.getLastPathSegment());
                 ProfileActivity.startActivity(baseActivity,memberId);

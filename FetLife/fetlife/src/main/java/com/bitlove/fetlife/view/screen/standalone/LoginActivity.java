@@ -29,6 +29,7 @@ import com.bitlove.fetlife.model.service.FetLifeApiIntentService;
 import com.bitlove.fetlife.util.PreferenceKeys;
 import com.bitlove.fetlife.view.dialog.MessageDialog;
 import com.bitlove.fetlife.view.screen.resource.ConversationsActivity;
+import com.bitlove.fetlife.view.screen.resource.TurboLinksViewActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -186,7 +187,8 @@ public class LoginActivity extends Activity {
     }
 
     public static void startLogin(FetLifeApplication fetLifeApplication) {
-        fetLifeApplication.startActivity(createIntent(fetLifeApplication,null));
+        TurboLinksViewActivity.startActivity(fetLifeApplication,"https://fetlife.com/login",fetLifeApplication.getString(R.string.app_name_kinky));
+        //fetLifeApplication.startActivity(createIntent(fetLifeApplication,null));
     }
 
     public static Intent createIntent(FetLifeApplication fetLifeApplication, String toast) {

@@ -71,6 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     protected boolean waitingForResult;
     protected ProgressBar progressIndicator;
+    private View toolBar;
     protected SimpleDraweeView toolBarImage;
     protected TextView toolBarTitle;
     protected boolean finishAfterNavigation;
@@ -122,8 +123,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             activityComponent.onActivityCreated(this, savedInstanceState);
         }
 
+        toolBar.setVisibility(hasToolbar() ? View.VISIBLE : View.GONE);
+
         final BottomNavigationView bottomNavigation = findViewById(R.id.navigation_bottom);
-        if (bottomNavigation != null) {
+        if (hasBottomNavigation() && bottomNavigation != null) {
+            bottomNavigation.setVisibility(View.VISIBLE);
 
             final ActivityOptionsCompat navOptions = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(BaseActivity.this, bottomNavigation, "bottomNavBar");
@@ -238,7 +242,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
                 }
             });
+        } else if (bottomNavigation != null){
+            bottomNavigation.setVisibility(View.GONE);
         }
+    }
+
+    protected boolean hasToolbar() {
+        return true;
+    }
+
+    protected boolean hasBottomNavigation() {
+        return true;
     }
 
     private void initNoActivePadding(BottomNavigationView bottomNavigation) {
@@ -364,6 +378,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         initProgressIndicator();
+        toolBar = findViewById(R.id.toolbar);
         toolBarImage = (SimpleDraweeView) findViewById(R.id.toolbar_image);
         toolBarTitle = (TextView) findViewById(R.id.toolbar_title);
     }

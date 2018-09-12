@@ -75,11 +75,11 @@ public class TurboLinksViewActivity extends ResourceActivity implements Turbolin
     private Set<String> requestedMediaIds = new HashSet<>();
     private String pageUrl = null;
 
-    public static void startActivity(BaseActivity menuActivity, String pageUrl, String title) {
+    public static void startActivity(Context menuActivity, String pageUrl, String title) {
         menuActivity.startActivity(createIntent(menuActivity,pageUrl,title,false));
     }
 
-    public static void startActivity(BaseActivity menuActivity, String pageUrl, String title, Integer bottomNavId, Bundle options) {
+    public static void startActivity(Context menuActivity, String pageUrl, String title, Integer bottomNavId, Bundle options) {
         Intent intent = new Intent(menuActivity,TurboLinksViewActivity.class);
         intent.putExtra(EXTRA_PAGE_URL, pageUrl);
         intent.putExtra(EXTRA_PAGE_TITLE, title);
@@ -97,6 +97,14 @@ public class TurboLinksViewActivity extends ResourceActivity implements Turbolin
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         }
         return intent;
+    }
+
+    @Override
+    protected boolean verifyUser() {
+        if ("https://fetlife.com/login".equals(getIntent().getStringExtra(EXTRA_PAGE_URL))) {
+            return true;
+        }
+        return super.verifyUser();
     }
 
     @Override
@@ -176,18 +184,31 @@ public class TurboLinksViewActivity extends ResourceActivity implements Turbolin
                 TurbolinksSession turbolinksSession = TurbolinksSession.getDefault(TurboLinksViewActivity.this);
                 turbolinksSession.setDebugLoggingEnabled(BuildConfig.DEBUG);
 
-                String accessToken = getFetLifeApplication().getUserSessionManager().getCurrentUser().getAccessToken();
-                turbolinksSession.activity(TurboLinksViewActivity.this)
+                Member currentUser = getFetLifeApplication().getUserSessionManager().getCurrentUser();
+                String accessToken = currentUser != null ? currentUser.getAccessToken() : null;
+
+                TurbolinksSession session = turbolinksSession.activity(TurboLinksViewActivity.this)
                         .adapter(TurboLinksViewActivity.this)
                         .view(turbolinksView)
                         .addProgressObserver(TurboLinksViewActivity.this)
                         .addPageObserver(TurboLinksViewActivity.this)
                         .restoreWithCachedSnapshot(false)
-                        .setPullToRefreshEnabled(true)
-                        .visitWithAuthHeader(location, FetLifeService.AUTH_HEADER_PREFIX + accessToken);
+                        .setPullToRefreshEnabled(true);
+
+                session.visitWithAuthHeader(location, accessToken != null ? FetLifeService.AUTH_HEADER_PREFIX + accessToken : null);
 
             }
         },33);
+    }
+
+    @Override
+    protected boolean hasBottomNavigation() {
+        return !"https://fetlife.com/login".equals(getIntent().getStringExtra(EXTRA_PAGE_URL));
+    }
+
+    @Override
+    protected boolean hasToolbar() {
+        return !"https://fetlife.com/login".equals(getIntent().getStringExtra(EXTRA_PAGE_URL));
     }
 
     @Override
