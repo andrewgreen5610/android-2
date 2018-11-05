@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.bitlove.fetlife.R;
 import com.bitlove.fetlife.model.pojos.fetlife.dbjson.Event;
 import com.bitlove.fetlife.model.service.FetLifeApiIntentService;
+import com.bitlove.fetlife.util.LogUtil;
 import com.bitlove.fetlife.view.adapter.EventsRecyclerAdapter;
 import com.bitlove.fetlife.view.adapter.ResourceListRecyclerAdapter;
 import com.bitlove.fetlife.view.screen.BaseActivity;
@@ -47,6 +48,7 @@ public class EventsFragment extends LoadFragment implements ResourceListRecycler
 
     @Override
     public void startResourceCall(int pageCount, int requestedPage) {
+        LogUtil.writeLog("Starting EventsFragment Resource Call");
         super.startResourceCall(pageCount, requestedPage);
     }
 

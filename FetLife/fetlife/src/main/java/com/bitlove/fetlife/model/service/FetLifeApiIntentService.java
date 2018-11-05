@@ -106,6 +106,7 @@ import com.bitlove.fetlife.session.UserSessionManager;
 import com.bitlove.fetlife.util.BytesUtil;
 import com.bitlove.fetlife.util.DateUtil;
 import com.bitlove.fetlife.util.FileUtil;
+import com.bitlove.fetlife.util.LogUtil;
 import com.bitlove.fetlife.util.MapUtil;
 import com.bitlove.fetlife.util.MessageDuplicationDebugUtil;
 import com.bitlove.fetlife.util.NetworkUtil;
@@ -596,10 +597,12 @@ public class FetLifeApiIntentService extends IntentService {
                 sendLoadFinishedNotification(action, result, params);
             }
         } catch (IOException ioe) {
+            LogUtil.writeLog("IntService log - ioex: " + ioe.getMessage());
             //If the call failed notify all subscribers about
 //            Crashlytics.logException(new Exception("EXTRA LOG Connection failed with exception",ioe));
             sendConnectionFailedNotification(action, params);
         } catch (SQLiteDiskIOException | InvalidDBConfiguration | SQLiteReadOnlyDatabaseException | IllegalStateException idb) {
+            LogUtil.writeLog("IntService log - dbex: " + idb.getMessage());
             //db might have been closed due probably to user logout, check it and let
             //the exception go in case of it is not the case
             //TODO: create separate DB Manager class to synchronize db executions and DB close due to user logout
@@ -2510,6 +2513,8 @@ public class FetLifeApiIntentService extends IntentService {
     }
 
     private int retrieveMemberEvents(String[] params) throws IOException {
+
+        LogUtil.writeLog("IntService log - getEvents invoked");
         String memberId = getLocalId(params[0]);
         if (memberId == null) {
             return Integer.MIN_VALUE;
@@ -2521,7 +2526,9 @@ public class FetLifeApiIntentService extends IntentService {
         getRsvpsCall = getFetLifeApi().getMemberRsvps(FetLifeService.AUTH_HEADER_PREFIX + getAccessToken(), memberId, /*"start_date_time",*/ limit, page);
 
         Response<List<Rsvp>> rsvpsResponse = getRsvpsCall.execute();
+        LogUtil.writeLog("IntService log - getEvents executed");
         if (rsvpsResponse.isSuccessful()) {
+            LogUtil.writeLog("IntService log - getEvents was successful");
 
             final List<Rsvp> retrievedRsvps = rsvpsResponse.body();
             List<EventReference> currentEvents = new Select().from(EventReference.class).where(EventReference_Table.userId.is(memberId)).orderBy(OrderBy.fromProperty(EventReference_Table.date).descending()).queryList();
@@ -2568,6 +2575,7 @@ public class FetLifeApiIntentService extends IntentService {
 
             return retrievedRsvps.size() - deletedItemCount;
         } else {
+            LogUtil.writeLog("IntService log - getEvents was failed");
             return Integer.MIN_VALUE;
         }
     }

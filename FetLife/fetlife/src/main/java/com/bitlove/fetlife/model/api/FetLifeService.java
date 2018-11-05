@@ -6,6 +6,7 @@ import android.os.Build;
 import com.bitlove.fetlife.BuildConfig;
 import com.bitlove.fetlife.FetLifeApplication;
 import com.bitlove.fetlife.R;
+import com.bitlove.fetlife.util.LogUtil;
 import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,6 +82,10 @@ public class FetLifeService {
                 Response response = chain.proceed(request);
                 //response.body().string();
                 lastResponseCode = response.code();
+                if (lastResponseCode >= 300) {
+                    LogUtil.writeLog("Interim log - request: " + request.url());
+                    LogUtil.writeLog("Interim log - lastResponseCode: " + lastResponseCode);
+                }
 //                if (BuildConfig.DEBUG && lastResponseCode > 299) {
 //                    BufferedSource source = response.body().source();
 //                    Buffer bufferedCopy = source.buffer().clone();

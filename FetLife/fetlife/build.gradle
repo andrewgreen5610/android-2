@@ -32,7 +32,7 @@ android {
         multiDexEnabled true
 
         versionCode 21715
-        versionName "2.17.15"
+        versionName "2.17.15_debug"
 
         vectorDrawables.useSupportLibrary = true
 

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bitlove.fetlife.FetLifeApplication;
 import com.bitlove.fetlife.R;
 import com.bitlove.fetlife.event.ServiceCallFailedEvent;
 import com.bitlove.fetlife.event.ServiceCallFinishedEvent;
@@ -19,6 +20,7 @@ import com.bitlove.fetlife.event.ServiceCallStartedEvent;
 import com.bitlove.fetlife.model.pojos.fetlife.dbjson.Event;
 import com.bitlove.fetlife.model.pojos.fetlife.dbjson.Member;
 import com.bitlove.fetlife.model.service.FetLifeApiIntentService;
+import com.bitlove.fetlife.util.LogUtil;
 import com.bitlove.fetlife.view.screen.component.MenuActivityComponent;
 import com.bitlove.fetlife.view.screen.resource.profile.EventsFragment;
 
@@ -87,6 +89,7 @@ public class EventsActivity extends ResourceActivity {
                             case 0:
                                 return new EventMapFragment();
                             case 1:
+                                LogUtil.writeLog("EventsActivity provides my Event Map Fragment");
                                 Member currentUser = getFetLifeApplication().getUserSessionManager().getCurrentUser();
                                 return EventsFragment.newInstance(currentUser.getId());
                             case 2:
@@ -123,6 +126,7 @@ public class EventsActivity extends ResourceActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onResourceListCallStarted(ServiceCallStartedEvent serviceCallStartedEvent) {
         if (isRelatedCall(serviceCallStartedEvent.getServiceCallAction(), serviceCallStartedEvent.getParams())) {
+            LogUtil.writeLog("EventsActivity Related Call Started: " + serviceCallStartedEvent.getServiceCallAction());
             showProgress();
         }
     }
@@ -130,6 +134,7 @@ public class EventsActivity extends ResourceActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void callFinished(ServiceCallFinishedEvent serviceCallFinishedEvent) {
         if (isRelatedCall(serviceCallFinishedEvent.getServiceCallAction(),serviceCallFinishedEvent.getParams()) && !isRelatedCall(FetLifeApiIntentService.getActionInProgress(),FetLifeApiIntentService.getInProgressActionParams())) {
+            LogUtil.writeLog("EventsActivity Related Call Finished: " + serviceCallFinishedEvent.getServiceCallAction());
             dismissProgress();
         }
     }
@@ -137,6 +142,7 @@ public class EventsActivity extends ResourceActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void callFailed(ServiceCallFailedEvent serviceCallFailedEvent) {
         if (isRelatedCall(serviceCallFailedEvent.getServiceCallAction(), serviceCallFailedEvent.getParams())) {
+            LogUtil.writeLog("EventsActivity Related Call Finished: " + serviceCallFailedEvent.getServiceCallAction() + "; lastResponseCode: " + FetLifeApplication.getInstance().getFetLifeService().getLastResponseCode());
             dismissProgress();
         }
     }
